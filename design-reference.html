@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Future Star Labs Design Reference</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:ital,wght@0,300;0,500;1,300&display=swap">
+<style>
+/* Layout: a lab notebook laid on a dark bench. Numbered sections, a left label column, figures with captions, one warm filament accent. */
+:root{
+  --bg:#0c0d10;
+  --surface:#13151a;
+  --raised:#1a1d23;
+  --line:#272b33;
+  --fg:#ebe7df;
+  --muted:#9d9a92;
+  --accent:#ff9b45;
+  --accent-soft:rgba(255,155,69,.14);
+  --cold:#72b4d4;
+  --display:"Spectral",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (min-width:700px){.wrap{padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}}
+.mono{font-family:var(--mono)}
+.label{font:500 12px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.skip{position:absolute;left:16px;top:-60px;background:var(--accent);color:#120a02;padding:8px 14px;z-index:100;font-weight:600;text-decoration:none}
+.skip:focus{top:calc(8px + env(safe-area-inset-top,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:300;text-wrap:balance;margin:0;line-height:1.08}
+h2{font-size:clamp(34px,5.2vw,60px);letter-spacing:-.01em}
+h2 em{font-style:italic;color:var(--muted)}
+h3{font-size:24px;font-weight:500}
+p{margin:0}
+
+/* ---------- header ---------- */
+.site-head{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:rgba(12,13,16,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.head-row{display:flex;align-items:center;justify-content:space-between;gap:16px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:500 16px var(--body);white-space:nowrap}
+.brand-mark{width:22px;height:22px;flex:none}
+.nav{display:flex;align-items:center;gap:2px}
+.nav a,.nav button.navbtn{font:500 13.5px var(--body);color:var(--fg);text-decoration:none;background:none;border:0;padding:8px 10px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.nav a:hover,.nav button.navbtn:hover{background:var(--raised)}
+.ext::after{content:" ↗";color:var(--muted);font-size:.9em}
+.nav .live{background:var(--accent);color:#140b02;margin-left:8px;font-weight:600}
+.nav .live:hover{background:#ffb06b}
+.dd{position:relative}
+.dd-panel{position:absolute;top:calc(100% + 8px);left:0;width:300px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px;box-shadow:0 20px 40px rgba(0,0,0,.45)}
+.dd-panel a{display:flex;gap:12px;padding:8px 10px}
+.dd-panel .num{font:12px var(--mono);color:var(--accent);padding-top:2px}
+.dd-sep{margin:8px 10px 4px;padding-top:10px;border-top:1px solid var(--line)}
+.menu-btn{display:none;background:none;border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:8px 12px;font:500 13px var(--body);cursor:pointer}
+@media (max-width:1239px){
+  .menu-btn{display:block}
+  .nav{display:none;position:fixed;left:0;right:0;top:calc(64px + env(safe-area-inset-top,0px));bottom:0;overflow:auto;flex-direction:column;align-items:stretch;background:var(--bg);padding:16px max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));gap:2px}
+  .nav.open{display:flex}
+  .nav a,.nav button.navbtn{font-size:17px;padding:12px;text-align:left}
+  .nav .live{margin:12px 0 0;text-align:center}
+  .dd-panel{position:static;width:auto;box-shadow:none;margin:4px 0 8px}
+}
+
+/* ---------- loader ---------- */
+#loader{position:fixed;inset:0;z-index:90;background:var(--bg);display:grid;place-items:center;transition:opacity .35s ease;cursor:pointer}
+#loader.done{opacity:0;pointer-events:none}
+.load-inner{text-align:center;display:grid;gap:14px}
+.load-name{font:300 clamp(34px,6vw,56px) var(--display)}
+.load-count{font:500 14px var(--mono);color:var(--accent);letter-spacing:.1em}
+
+/* ---------- sections ---------- */
+section{padding-block:clamp(72px,10vw,128px);border-top:1px solid var(--line)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;margin-bottom:clamp(36px,5vw,60px)}
+@media (min-width:900px){.sec-head{grid-template-columns:200px minmax(0,1fr)}}
+.sec-no{font:500 13px var(--mono);color:var(--accent);letter-spacing:.06em;padding-top:10px}
+.lede{max-width:60ch;color:var(--muted);font-size:17px;margin-top:18px}
+
+/* hero */
+.hero{border-top:0;padding-block:clamp(56px,9vw,112px) clamp(64px,9vw,104px)}
+.chain{display:flex;flex-wrap:wrap;gap:8px 14px;list-style:none;padding:0;margin:22px 0 0;font:500 13px var(--mono);color:var(--muted)}
+.chain li:not(:first-child)::before{content:"→";margin-right:14px;color:var(--line)}
+.chain li.on{color:var(--fg)}
+.hero h1{font-size:clamp(56px,11.5vw,156px);letter-spacing:-.03em;line-height:.92;margin-top:36px}
+.hero h1 span{display:block;font-style:italic;color:var(--accent)}
+.hero-foot{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;margin-top:44px;align-items:end}
+@media (min-width:820px){.hero-foot{grid-template-columns:minmax(0,1.4fr) auto}}
+.hero-foot p{max-width:56ch;font-size:19px;line-height:1.55}
+.verbs{font:500 13px var(--mono);color:var(--muted);margin-top:16px;letter-spacing:.04em}
+.probe{border:1px solid var(--line);border-radius:10px;padding:14px 18px;min-width:200px;background:var(--surface)}
+.probe-val{font:500 34px var(--mono);font-variant-numeric:tabular-nums;margin-top:4px}
+.probe-val small{font-size:15px;color:var(--muted)}
+.probe-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:8px;vertical-align:1px;animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* about */
+.about-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
+@media (min-width:960px){.about-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}}
+figure{margin:0}
+.fig-frame{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#090a0c}
+#wave{display:block;width:100%;aspect-ratio:16/11;touch-action:none;cursor:grab}
+#wave:active{cursor:grabbing}
+.fig-read{position:absolute;right:12px;top:12px;font:500 12px var(--mono);background:rgba(12,13,16,.8);border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-variant-numeric:tabular-nums}
+figcaption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;font:13px var(--mono);color:var(--muted)}
+.pillars{display:grid;gap:0;list-style:none;padding:0;margin:0}
+.pillars li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;padding:22px 0;border-top:1px solid var(--line)}
+.pillars li:last-child{border-bottom:1px solid var(--line)}
+.pillars .k{font:500 13px var(--mono);color:var(--accent);padding-top:3px}
+.pillars h3{font-size:21px;margin-bottom:6px}
+.pillars p{color:var(--muted)}
+
+/* fields */
+.fields{display:grid;grid-template-columns:minmax(0,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;list-style:none;padding:0;margin:0}
+@media (min-width:700px){.fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1080px){.fields{grid-template-columns:repeat(6,minmax(0,1fr))}.fields li{grid-column:span 2}.fields li:nth-child(n+4){grid-column:span 3}}
+.fields li{background:var(--bg);padding:28px 26px 30px;display:flex;flex-direction:column;gap:14px}
+.fields .eq{font:500 22px var(--mono);color:var(--accent)}
+.fields .topline{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.fields p{color:var(--muted);flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips a{font:500 13px var(--body);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.chips a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* feature */
+.feature-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:40px;align-items:start}
+@media (min-width:960px){.feature-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}.feature-fig{position:sticky;top:100px}}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.steps button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;width:100%;padding:20px 22px;border:1px solid var(--line);border-radius:10px;cursor:pointer;transition:border-color .2s,background .2s}
+.steps button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.steps button.on{border-color:var(--accent);background:var(--accent-soft)}
+.steps .k{font:500 13px var(--mono);color:var(--accent);padding-top:4px}
+.steps h3{font-size:21px;margin-bottom:6px}
+.steps p{color:var(--muted)}
+#couple{width:100%;height:auto;display:block}
+#couple text{font-family:var(--mono);font-size:11px;fill:var(--muted);letter-spacing:.06em}
+#couple .plate{fill:var(--raised);stroke:var(--line);transition:fill .3s}
+#couple .leg{stroke:var(--line);transition:stroke .3s}
+#couple .wire{fill:none;stroke:#3a3f48;stroke-width:2;transition:stroke .3s}
+#couple .dt{stroke:#3a3f48;transition:stroke .3s}
+#couple .carrier{opacity:.35;transition:opacity .3s}
+#couple[data-step="1"] .hot{fill:#4a2a12;stroke:var(--accent)}
+#couple[data-step="2"] .hot{fill:#3a2412}
+#couple[data-step="2"] .cold{stroke:var(--cold)}
+#couple[data-step="2"] .dt{stroke:var(--accent)}
+#couple[data-step="2"] .dt-t{fill:var(--accent)}
+#couple[data-step="3"] .carrier{opacity:1}
+#couple[data-step="3"] .leg{stroke:#59606b}
+#couple[data-step="4"] .wire{stroke:var(--accent)}
+#couple[data-step="4"] .carrier{opacity:.8}
+#couple[data-step="4"] .load-t{fill:var(--accent)}
+.c-p{animation:down 2.4s linear infinite}
+.c-n{animation:down 2.4s linear infinite}
+@keyframes down{from{transform:translateY(0)}to{transform:translateY(150px)}}
+.facts{display:grid;grid-template-columns:minmax(0,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:48px}
+@media (min-width:760px){.facts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.facts div{background:var(--bg);padding:22px 24px;display:flex;flex-direction:column;gap:8px}
+.facts p{color:var(--muted)}
+.facts .eq{font:500 18px var(--mono);color:var(--fg)}
+.textlink{font:500 14px var(--body);color:var(--accent);text-decoration:none}
+.textlink:hover{text-decoration:underline}
+
+/* notebook */
+.stats{display:flex;flex-wrap:wrap;gap:40px;margin-bottom:36px}
+.stats b{display:block;font:300 44px var(--display);margin-top:2px}
+.index{list-style:none;padding:0;margin:0;border-top:1px solid var(--line)}
+.index a{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:6px 18px;align-items:baseline;padding:18px 4px;border-bottom:1px solid var(--line);text-decoration:none;transition:background .2s}
+.index a:hover{background:var(--surface)}
+.index .n{font:13px var(--mono);color:var(--muted)}
+.index .t{font:400 22px var(--display)}
+.index .e{font:14px var(--mono);color:var(--accent);grid-column:2}
+.index .s{font:12px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;grid-row:1;grid-column:3}
+@media (min-width:820px){.index a{grid-template-columns:52px minmax(0,1.3fr) minmax(0,1fr) 200px}.index .e{grid-column:3;grid-row:1}.index .s{grid-column:4;text-align:right}}
+.also{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:24px;align-items:baseline}
+.also a{font-size:14px;text-decoration:none;color:var(--muted)}
+.also a:hover{color:var(--fg)}
+
+/* experiment */
+.lab{display:grid;grid-template-columns:minmax(0,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+@media (min-width:920px){.lab{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}}
+.lab > div{background:var(--surface);padding:clamp(20px,3vw,32px)}
+#junction{width:100%;height:auto;display:block}
+#junction text{font:11px var(--mono);fill:var(--muted);letter-spacing:.05em}
+.sliders{display:grid;gap:22px;margin-top:22px}
+.slider label{display:flex;justify-content:space-between;font:500 13px var(--mono);color:var(--muted);margin-bottom:8px}
+.slider output{color:var(--fg);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent);height:24px}
+#cold{accent-color:var(--cold)}
+.readout{display:flex;flex-direction:column;gap:22px;justify-content:center}
+.big{font:500 clamp(48px,7vw,72px)/1 var(--mono);font-variant-numeric:tabular-nums;color:var(--accent)}
+.big small{font-size:.4em;color:var(--muted);margin-left:6px}
+.meter{height:6px;background:var(--raised);border-radius:3px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);width:60%;transition:width .15s}
+.note{font-size:13px;color:var(--muted);margin-top:16px;max-width:70ch}
+
+/* method */
+.method{display:grid;grid-template-columns:minmax(0,1fr);gap:0;list-style:none;padding:0;margin:0;counter-reset:m}
+@media (min-width:760px){.method{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.method li{padding:26px 22px 26px 0;border-top:1px solid var(--fg);display:flex;flex-direction:column;gap:10px}
+.method .k{font:500 13px var(--mono);color:var(--accent)}
+.method h3{font-size:30px;font-weight:300}
+.method p{color:var(--muted);padding-right:12px}
+
+/* closing + footer */
+.closing h2{max-width:16ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.btn{font:600 14px var(--body);text-decoration:none;padding:12px 20px;border-radius:8px;border:1px solid var(--line)}
+.btn.primary{background:var(--accent);color:#140b02;border-color:var(--accent)}
+.btn:hover{border-color:var(--accent)}
+footer{border-top:1px solid var(--line);padding-block:56px calc(36px + env(safe-area-inset-bottom,0px));background:var(--surface)}
+.foot-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 24px}
+@media (min-width:900px){.foot-grid{grid-template-columns:1fr 1fr 1.5fr 1fr}}
+.foot-grid h4{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+.foot-grid ul{list-style:none;padding:0;margin:0;display:grid;gap:9px}
+.foot-grid a{text-decoration:none;font-size:14px}
+.foot-grid a:hover{color:var(--accent)}
+.foot-grid .desc{display:block;font-size:13px;color:var(--muted);margin-top:2px;line-height:1.45}
+.foot-base{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--line);font:13px var(--mono);color:var(--muted)}
+.foot-base button{background:none;border:1px solid var(--line);color:var(--fg);font:500 13px var(--mono);padding:8px 14px;border-radius:6px;cursor:pointer}
+.foot-base button:hover{border-color:var(--accent)}
+.demo-tag{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:40;font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;background:var(--raised);border:1px solid var(--line);color:var(--muted);padding:6px 10px;border-radius:6px}
+
+/* subject view */
+.subject{padding-block:48px 96px}
+.crumb{font:13px var(--mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:8px}
+.crumb a{color:var(--fg);text-decoration:none}
+.crumb a:hover{color:var(--accent)}
+.subject h1{font-size:clamp(52px,9vw,112px);letter-spacing:-.025em;line-height:.95;margin-top:36px}
+.subject .lede{font-size:19px;color:var(--fg);max-width:58ch;margin-top:24px}
+.subj-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:40px;margin-top:56px}
+@media (min-width:900px){.subj-grid{grid-template-columns:220px minmax(0,1fr)}.toc{position:sticky;top:100px;align-self:start}}
+.toc ol{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:4px}
+.toc a{display:flex;gap:10px;text-decoration:none;font-size:14px;padding:6px 0;color:var(--muted)}
+.toc a:hover{color:var(--fg)}
+.toc .k{font:12px var(--mono);color:var(--accent);padding-top:2px}
+.subj-sec{padding:0 0 44px;margin-bottom:44px;border-bottom:1px solid var(--line);max-width:68ch}
+.subj-sec .k{font:500 13px var(--mono);color:var(--accent)}
+.subj-sec h2{font-size:clamp(30px,4vw,42px);margin:8px 0 18px}
+.subj-sec p{margin-bottom:14px;color:#d6d2ca}
+.subj-sec ul{padding-left:20px;margin:0 0 14px;display:grid;gap:8px;color:#d6d2ca}
+.eqblock{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:16px 20px;margin:18px 0;overflow-x:auto}
+.eqblock code{font:500 20px var(--mono);color:var(--accent);white-space:nowrap}
+.eqblock span{display:block;font-size:13px;color:var(--muted);margin-top:6px}
+.subj-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;align-items:end;max-width:68ch}
+.next{text-decoration:none;text-align:right}
+.next .label{display:block}
+.next b{font:300 32px var(--display)}
+.next:hover b{color:var(--accent)}
+/* ---------- company + product ---------- */
+.status{display:inline-flex;align-items:center;gap:7px;font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st-done,.r-inh{color:#7fd19b;border-color:rgba(127,209,155,.4)}
+.st-dev,.r-part{color:var(--accent);border-color:rgba(255,155,69,.4)}
+.st-plan{color:var(--cold);border-color:rgba(114,180,212,.4)}
+.r-none{color:#ef7d68;border-color:rgba(239,125,104,.45)}
+.legend-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.tree-root{border:1px solid var(--line);border-radius:12px;padding:24px 26px;background:var(--surface);display:grid;gap:8px}
+.tree-root b{font:300 clamp(26px,3.4vw,36px)/1.15 var(--display)}
+.tree-root p{color:var(--muted)}
+.tree-stem{height:34px;margin-left:40px;border-left:1px dashed #3a3f48}
+.tree-kids{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media (min-width:760px){.tree-kids{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tree-card{display:flex;flex-direction:column;gap:14px;text-decoration:none;border:1px solid var(--line);border-radius:12px;padding:24px 26px;transition:border-color .2s}
+.tree-card:hover{border-color:var(--accent)}
+.tree-card ul{margin:0;padding-left:18px;color:var(--muted);display:grid;gap:5px;flex:1}
+.tc-top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.pblock{margin-top:72px;padding-top:56px;border-top:1px solid var(--line)}
+.pblock > h2{font-size:clamp(30px,4.4vw,48px);margin-bottom:14px}
+.pblock > .lede{margin-top:0}
+.facts-row{display:flex;flex-wrap:wrap;gap:12px 32px;margin-top:28px;font:13px var(--mono);color:var(--muted)}
+.facts-row b{color:var(--fg);font-weight:500}
+.cards{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:28px}
+@media (min-width:760px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1000px){.cards.three{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.card{border:1px solid var(--line);border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:8px}
+.card p{color:var(--muted)}
+.card h3{font-size:22px}
+.pipeline{list-style:none;padding:0;margin:28px 0 0;border-top:1px solid var(--line)}
+.pipeline li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:8px 16px;padding:20px 0;border-bottom:1px solid var(--line);align-items:start}
+.pipeline .k{font:500 13px var(--mono);color:var(--accent);padding-top:4px}
+.pipeline h3{font-size:22px;margin-bottom:4px}
+.pipeline p{color:var(--muted);max-width:62ch}
+@media (max-width:600px){.pipeline li{grid-template-columns:36px minmax(0,1fr)}.pipeline .status{grid-column:2;justify-self:start}}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.seg button{font:500 13px var(--body);color:var(--fg);background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:8px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.sim-controls{display:grid;gap:20px;margin-bottom:18px}
+@media (min-width:700px){.sim-controls{grid-template-columns:auto minmax(0,1fr);align-items:end;gap:28px}}
+#simChart{width:100%;height:auto;display:block}
+#simChart text{font:11px var(--mono);fill:var(--muted)}
+#simChart .grid{stroke:var(--line)}
+#simChart .ctrl{fill:none;stroke:#8d8a83;stroke-width:2;stroke-dasharray:5 5}
+#simChart .treat{fill:none;stroke:var(--accent);stroke-width:3}
+#simChart .dotc{fill:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:18px;font:12px var(--mono);color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:0;border-top:2px dashed #8d8a83;vertical-align:middle;margin-right:8px}
+.legend .lg-t{border-top:3px solid var(--accent)}
+.proto{margin-top:20px;border:1px solid var(--line);border-radius:12px;background:#0a0b0e;padding:20px 22px}
+.proto-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.proto pre{font:13px/1.6 var(--mono);color:#cfcabf;margin:14px 0 0;overflow-x:auto}
+.people{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:28px}
+@media (min-width:760px){.people{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.people .role{font:500 12px var(--mono);color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+</style>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div id="loader" hidden aria-hidden="true">
+  <div class="load-inner">
+    <div class="load-name">Future Star Labs</div>
+    <div class="label">Matter → Energy → Signal → Discovery</div>
+    <div class="load-count" id="loadCount">000 %</div>
+  </div>
+</div>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="brand" href="#top" aria-label="Future Star Labs home">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" stroke="#ff9b45" stroke-width="1.5"/><path d="M12 4.5 13.8 10.2 19.5 12 13.8 13.8 12 19.5 10.2 13.8 4.5 12 10.2 10.2Z" fill="#ebe7df"/></svg>
+      Future Star Labs
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#top">Home</a>
+      <a href="#company">Company</a>
+      <a href="#bactesign">BacteSign</a>
+      <a class="ext" href="https://futurestarlabs.com/projects" target="_blank" rel="noopener">Projects</a>
+      <a class="ext" href="https://futurestarlabs.com/events" target="_blank" rel="noopener">Events</a>
+      <div class="dd">
+        <button class="navbtn" id="subjBtn" aria-expanded="false" aria-controls="subjPanel">Subjects ▾</button>
+        <div class="dd-panel" id="subjPanel" hidden></div>
+      </div>
+      <a class="ext" href="https://futurestarlabs.com/investments" target="_blank" rel="noopener">Investments</a>
+      <a class="ext" href="https://futurestarlabs.com/products" target="_blank" rel="noopener">Products</a>
+      <a class="ext" href="https://futurestarlabs.com/percent-difference" target="_blank" rel="noopener">Percent Difference</a>
+      <a class="live" href="https://futurestarlabs.com/events" target="_blank" rel="noopener">Livestreams</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+<div id="home">
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div class="label">Biological testing · Physics · Materials</div>
+      <ol class="chain" id="chain"><li class="on">Matter</li><li>Energy</li><li>Signal</li><li>Discovery</li></ol>
+      <h1>Future Star<span>Labs</span></h1>
+      <div class="hero-foot">
+        <div>
+          <p>Future Star Laboratories builds programmable biological testing platforms for Physical AI labs. The work rests on first-principles physics and materials, from a single thermocouple junction to an engineered surface that positions a cell.</p>
+          <div class="verbs">Experiment / Understand / Build</div>
+        </div>
+        <div class="probe" aria-label="Decorative probe readout">
+          <div class="label"><span class="probe-dot"></span>Probe · bench</div>
+          <div class="probe-val"><span id="probe">23.4</span><small> °C</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="platform">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-no">01 · Platform</div>
+        <div><h2>Programmable biological testing <em>for Physical AI labs.</em></h2><p class="lede">AI-driven machines are learning to plan experiments and carry them out at the bench. Future Star Labs builds the assays they need: tests that software can set up, run and read. BacteSign, for bacteria, comes first.</p></div>
+      </div>
+      <div class="tree">
+        <div class="tree-root"><span class="label">Future Star Laboratories</span><b>Programmable biological testing platforms</b><p>Engineered assays, miniaturised fluidics, impedance sensing and automated workflows.</p></div>
+        <div class="tree-stem" aria-hidden="true"></div>
+        <div class="tree-kids">
+          <a class="tree-card" href="#bactesign">
+            <div class="tc-top"><span class="label">First market</span><span class="status st-done">Proof of concept</span></div>
+            <h3>BacteSign</h3>
+            <ul><li>Bacterial identification</li><li>Antibiotic susceptibility testing</li><li>Antimicrobial resistance research</li><li>Built for AI-lab integration</li></ul>
+            <span class="textlink">See how it works →</span>
+          </a>
+          <a class="tree-card" href="#company">
+            <div class="tc-top"><span class="label">Future cell applications</span><span class="status st-plan">Planned</span></div>
+            <h3>Mammalian-cell assays</h3>
+            <ul><li>Therapeutic toxicity and efficacy screening</li><li>Organoid growth monitoring</li><li>Blood-brain barrier models for neurological drugs</li></ul>
+            <span class="textlink">See the roadmap →</span>
+          </a>
+        </div>
+      </div>
+      <p class="note">Bacterial separation and impedance monitoring have been shown in the lab. AI-lab integration and the mammalian-cell applications are later milestones, and each needs its own validation.</p>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-no">02 · About</div>
+        <div><h2>The forces behind <em>every new technology.</em></h2></div>
+      </div>
+      <div class="about-grid">
+        <figure>
+          <div class="fig-frame">
+            <canvas id="wave" tabindex="0" aria-label="Two-source interference pattern. Drag, or use arrow keys, to move the second source."></canvas>
+            <div class="fig-read" id="waveRead">d = 3.0 λ</div>
+          </div>
+          <figcaption><span>Fig. 01 · Two coherent sources</span><span>Drag the right source</span></figcaption>
+        </figure>
+        <ul class="pillars">
+          <li><span class="k">01</span><div><h3>Practice</h3><p>Consulting grounded in first-principles analysis, where nanotechnology, nanoelectronics, biomedical engineering, aerospace and blockchain overlap.</p></div></li>
+          <li><span class="k">02</span><div><h3>Method</h3><p>Market research and project scoping that turn the analysis into a clear roadmap for adopting new technology.</p></div></li>
+          <li><span class="k">03</span><div><h3>Notebook</h3><p>Open study notes and worked problems across fourteen subjects, free to read, from thermoelectrics to vacuum systems.</p></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="fields">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-no">03 · Fields</div>
+        <div><h2>Five fields, <em>one set of laws.</em></h2><p class="lede">Each field opens onto chapters of the notebook. The physics is the same throughout; only the starting point changes.</p></div>
+      </div>
+      <ul class="fields" id="fieldList"></ul>
+    </div>
+  </section>
+
+  <section id="feature">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-no">04 · Thermoelectrics</div>
+        <div><h2>A temperature difference <em>becomes a current.</em></h2></div>
+      </div>
+      <div class="feature-grid">
+        <ol class="steps" id="steps">
+          <li><button data-step="1" class="on"><span class="k">01</span><span><h3>Heat the top</h3><p>Heat reaches one face of the couple: a p-type leg and an n-type leg joined by a metal contact.</p></span></button></li>
+          <li><button data-step="2"><span class="k">02</span><span><h3>Keep the bottom cold</h3><p>The other face stays cool. The temperature difference ΔT across each leg drives everything after it.</p></span></button></li>
+          <li><button data-step="3"><span class="k">03</span><span><h3>Carriers drift</h3><p>Holes move down the p-leg and electrons down the n-leg. Opposite charges travelling the same way add their voltages.</p></span></button></li>
+          <li><button data-step="4"><span class="k">04</span><span><h3>Power the load</h3><p>Close the circuit and current flows. Push current the other way and the same couple pumps heat instead: the Peltier effect.</p></span></button></li>
+        </ol>
+        <figure class="feature-fig">
+          <div class="fig-frame" style="padding:18px 10px 6px">
+            <svg id="couple" data-step="1" viewBox="0 0 420 380" role="img" aria-label="Thermoelectric couple: a hot plate on top, p-type and n-type legs below it, two cold plates at the bottom wired through a load.">
+              <rect class="plate hot" x="70" y="40" width="280" height="26" rx="3"/>
+              <text x="210" y="28" text-anchor="middle">HOT SIDE · Th</text>
+              <rect class="leg" x="100" y="66" width="72" height="168" fill="#1c1f26" stroke-width="1.5"/>
+              <rect class="leg" x="248" y="66" width="72" height="168" fill="#1c1f26" stroke-width="1.5"/>
+              <text x="136" y="156" text-anchor="middle" style="font-size:16px;fill:#ebe7df">p</text>
+              <text x="284" y="156" text-anchor="middle" style="font-size:16px;fill:#ebe7df">n</text>
+              <clipPath id="clipP"><rect x="100" y="66" width="72" height="168"/></clipPath>
+              <clipPath id="clipN"><rect x="248" y="66" width="72" height="168"/></clipPath>
+              <g clip-path="url(#clipP)"><g class="carrier"><g class="c-p">
+                <circle cx="118" cy="40" r="5" fill="none" stroke="#ff9b45" stroke-width="1.6"/><circle cx="152" cy="80" r="5" fill="none" stroke="#ff9b45" stroke-width="1.6"/><circle cx="128" cy="120" r="5" fill="none" stroke="#ff9b45" stroke-width="1.6"/><circle cx="148" cy="-10" r="5" fill="none" stroke="#ff9b45" stroke-width="1.6"/><circle cx="122" cy="-60" r="5" fill="none" stroke="#ff9b45" stroke-width="1.6"/><circle cx="150" cy="-100" r="5" fill="none" stroke="#ff9b45" stroke-width="1.6"/><circle cx="130" cy="170" r="5" fill="none" stroke="#ff9b45" stroke-width="1.6"/>
+              </g></g></g>
+              <g clip-path="url(#clipN)"><g class="carrier"><g class="c-n">
+                <circle cx="266" cy="30" r="4.5" fill="#72b4d4"/><circle cx="300" cy="70" r="4.5" fill="#72b4d4"/><circle cx="276" cy="115" r="4.5" fill="#72b4d4"/><circle cx="298" cy="-20" r="4.5" fill="#72b4d4"/><circle cx="270" cy="-70" r="4.5" fill="#72b4d4"/><circle cx="296" cy="-110" r="4.5" fill="#72b4d4"/><circle cx="282" cy="165" r="4.5" fill="#72b4d4"/>
+              </g></g></g>
+              <rect class="plate cold" x="70" y="234" width="122" height="24" rx="3"/>
+              <rect class="plate cold" x="228" y="234" width="122" height="24" rx="3"/>
+              <text x="210" y="282" text-anchor="middle">COLD SIDE · Tc</text>
+              <line class="dt" x1="378" y1="44" x2="378" y2="254" stroke-width="1.5"/>
+              <path class="dt" d="M372 52 378 42 384 52M372 246 378 256 384 246" fill="none" stroke-width="1.5"/>
+              <text class="dt-t" x="392" y="154" style="font-size:13px">ΔT</text>
+              <path class="wire" d="M110 258 V330 H180"/>
+              <path class="wire" d="M310 258 V330 H240"/>
+              <rect x="180" y="316" width="60" height="28" rx="4" fill="#1a1d23" stroke="#3a3f48"/>
+              <text class="load-t" x="210" y="334" text-anchor="middle">LOAD</text>
+              <text class="load-t" x="210" y="370" text-anchor="middle" style="font-size:13px">V = α · ΔT</text>
+            </svg>
+          </div>
+          <figcaption><span>Fig. 02 · A single thermoelectric couple</span><span id="stepCap">Step 01 of 04</span></figcaption>
+        </figure>
+      </div>
+      <div class="facts">
+        <div><span class="label">Thermal engineering</span><p>The study of how heat moves and how it converts into other forms of energy.</p></div>
+        <div><span class="label">Two directions</span><p>Generate power from a temperature difference, or cool with a current. Small, solid-state, no moving parts.</p></div>
+        <div><span class="label">Thermocouples</span><span class="eq">V = α (Th − Tc)</span><a class="textlink" href="#thermoelectrics">Read the chapter →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="notebook">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-no">05 · Notebook</div>
+        <div><h2>The open <em>notebook.</em></h2></div>
+      </div>
+      <div class="stats">
+        <div><span class="label">Chapters</span><b>12</b></div>
+        <div><span class="label">Subjects</span><b>8</b></div>
+        <div><span class="label">Access</span><b>Open</b></div>
+      </div>
+      <ol class="index" id="index"></ol>
+      <div class="also"><span class="label">More on futurestarlabs.com</span><span id="alsoLinks" style="display:contents"></span></div>
+    </div>
+  </section>
+
+  <section id="experiment">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-no">06 · Experiment</div>
+        <div><h2>Hold one end cold. <em>Heat the other.</em></h2><p class="lede">Every charge carrier jiggles with temperature, but only a difference in temperature makes them drift. That drift is a voltage you can measure.</p></div>
+      </div>
+      <div class="lab">
+        <div>
+          <svg id="junction" viewBox="0 0 520 170" role="img" aria-label="Thermocouple wire running from the cold junction on the left to the hot junction on the right, colored by temperature.">
+            <defs><linearGradient id="wireGrad" x1="0" x2="1"><stop id="g0" offset="0" stop-color="#72b4d4"/><stop id="g1" offset="1" stop-color="#ff9b45"/></linearGradient></defs>
+            <path d="M60 60 C200 20 320 20 460 60" stroke="url(#wireGrad)" stroke-width="7" fill="none" stroke-linecap="round"/>
+            <path d="M60 100 C200 140 320 140 460 100" stroke="url(#wireGrad)" stroke-width="7" fill="none" stroke-linecap="round" opacity=".55"/>
+            <circle id="jc" cx="60" cy="80" r="22" fill="#72b4d4"/>
+            <circle id="jh" cx="460" cy="80" r="22" fill="#ff9b45"/>
+            <circle id="jhGlow" cx="460" cy="80" r="34" fill="#ff9b45" opacity=".18"/>
+            <text x="60" y="140" text-anchor="middle">COLD</text>
+            <text x="460" y="140" text-anchor="middle">HOT</text>
+            <text x="260" y="84" text-anchor="middle" id="dtLabel" style="font-size:13px;fill:#ebe7df">ΔT +300 °C</text>
+          </svg>
+          <div class="sliders">
+            <div class="slider"><label for="cold"><span>Cold junction</span><output id="coldOut">20 °C</output></label><input type="range" id="cold" min="0" max="500" value="20"></div>
+            <div class="slider"><label for="hot"><span>Hot junction</span><output id="hotOut">320 °C</output></label><input type="range" id="hot" min="0" max="500" value="320"></div>
+          </div>
+        </div>
+        <div class="readout">
+          <div><span class="label">ΔT</span><div class="big" style="color:var(--fg);font-size:clamp(34px,4.5vw,44px)" id="dtOut">+300<small>°C</small></div></div>
+          <div><span class="label">Output voltage</span><div class="big" id="vOut">12.30<small>mV</small></div></div>
+          <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+          <div class="mono" style="font-size:14px;color:var(--muted)">V = α · ΔT, α ≈ 41 µV/°C (Type K)</div>
+        </div>
+      </div>
+      <p class="note">A linear approximation. A real Type K junction's response bends slightly with temperature, so lab work uses reference tables or polynomials.</p>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="sec-no">07 · Method</div>
+        <div><h2>Observe, question, <em>experiment, understand.</em></h2></div>
+      </div>
+      <ol class="method">
+        <li><span class="k">01</span><h3>Observe</h3><p>Take the measurement before making assumptions.</p></li>
+        <li><span class="k">02</span><h3>Question</h3><p>Find what the data can't explain yet.</p></li>
+        <li><span class="k">03</span><h3>Experiment</h3><p>Change one variable and hold the rest.</p></li>
+        <li><span class="k">04</span><h3>Understand</h3><p>Explain the result from first principles.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div class="wrap">
+      <div class="label" style="margin-bottom:18px">Get in touch</div>
+      <h2>Have a project <em>that needs first principles?</em></h2>
+      <div class="cta-row">
+        <a class="btn primary" href="#bactesign">Explore BacteSign</a>
+        <a class="btn" href="#company">About the company</a>
+        <a class="btn" href="https://futurestarlabs.com/events" target="_blank" rel="noopener">Watch livestreams ↗</a>
+        <a class="btn" href="#notebook">Open the notebook</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="subjectView" hidden></div>
+
+<div id="companyView" hidden><div class="wrap subject">
+  <div class="crumb"><a href="#top">← Home</a><span>/</span><span>Company</span></div>
+  <h1>Future Star Laboratories</h1>
+  <p class="lede">We build programmable biological testing platforms for Physical AI laboratories: assays that software can set up, run, measure and analyse. We are starting with bacteria.</p>
+  <div class="facts-row"><span>Legal entity <b>Future Star Labs LLC</b></span><span>Based in <b>Dallas–Fort Worth</b></span><span>First product <b>BacteSign</b></span></div>
+  <div class="legend-row"><span class="status st-done">Demonstrated</span><span class="status st-dev">In development</span><span class="status st-plan">Planned</span></div>
+
+  <div class="pblock">
+    <span class="label">The problem</span>
+    <h2>Biology is still hard to automate.</h2>
+    <div class="cards">
+      <div class="card"><h3>Manual handling</h3><p>Biological experiments depend on hands-on sample preparation that is slow and hard to standardise.</p></div>
+      <div class="card"><h3>Reproducibility</h3><p>Results shift between operators, runs and labs, so the same test can give different answers.</p></div>
+      <div class="card"><h3>Cost and training</h3><p>Consumables are expensive, and every assay takes skilled staff time to learn and run well.</p></div>
+      <div class="card"><h3>Machines are learning the bench</h3><p>AI-driven robots are learning to pipette, handle samples and run experiments. They need assays built for machines: consistent, measurable and controlled by software. Future Star Labs builds its assays that way from the start.</p></div>
+    </div>
+  </div>
+
+  <div class="pblock">
+    <span class="label">Our approach</span>
+    <h2>Engineer the assay itself.</h2>
+    <p class="lede">Instead of bolting robots onto existing lab equipment, we design the assay so it can be automated from the start. We control where cells sit and what they are exposed to, then connect that to sensing and software.</p>
+    <ol class="pipeline">
+      <li><span class="k">01</span><div><h3>Engineered surfaces</h3><p>Separate and position cells so every run starts the same way.</p></div><span class="status st-done">Demonstrated</span></li>
+      <li><span class="k">02</span><div><h3>Miniaturised fluidics</h3><p>A lab-on-a-disc format that moves samples and reagents. Three design iterations completed so far.</p></div><span class="status st-dev">In development</span></li>
+      <li><span class="k">03</span><div><h3>Impedance sensing</h3><p>An electrical readout of how cells respond, with no stains or manual counting.</p></div><span class="status st-done">Demonstrated</span></li>
+      <li><span class="k">04</span><div><h3>Automated workflows</h3><p>Python instrument control, signal processing and data analysis.</p></div><span class="status st-dev">In development</span></li>
+      <li><span class="k">05</span><div><h3>Physical AI integration</h3><p>Software-defined setup, measurement and AI-assisted interpretation of impedance signals, through a web interface and lab automation systems.</p></div><span class="status st-plan">Planned</span></li>
+    </ol>
+  </div>
+
+  <div class="pblock">
+    <span class="label">Roadmap</span>
+    <h2>From bacteria to human cells.</h2>
+    <ol class="pipeline">
+      <li><span class="k">Now</span><div><h3>BacteSign for research use</h3><p>Bring fluid handling, sensing, instrument control and software together into one system for research-use evaluation.</p></div><span class="status st-dev">In development</span></li>
+      <li><span class="k">Next</span><div><h3>AI-lab integration and external validation</h3><p>Connect BacteSign to AI-driven lab automation end to end, and have it tested outside our own lab.</p></div><span class="status st-plan">Planned</span></li>
+      <li><span class="k">Later</span><div><h3>Mammalian-cell applications</h3><p>Toxicity and efficacy screening for therapeutics, organoid growth monitoring, and blood-brain barrier models for neurological drug testing. Each needs its own biological validation; bacterial results don't carry over.</p></div><span class="status st-plan">Planned</span></li>
+    </ol>
+  </div>
+
+  <div class="pblock">
+    <span class="label">Team</span>
+    <h2>The founders.</h2>
+    <div class="people">
+      <div class="card"><span class="role">Co-founder · Technical lead</span><h3>Andre Childs</h3><p>PhD in Materials Science and Engineering, University of Central Florida (2024). Research in biosensors, microfabricated assays, bacterial identification and antibiotic susceptibility testing. Leads assay engineering, microfabrication, sensor development and prototyping.</p></div>
+      <div class="card"><span class="role">Co-founder · Clinical research</span><h3>Karolina Budzen</h3><p>Brings clinical research expertise, identifies the biomedical use cases where better testing matters most, and shapes product development.</p></div>
+    </div>
+    <div class="facts-row"><span>Programs</span><span><b>Alloy Futures Biotech Startup Academy</b>, Dallas, 2026</span><span><b>NSF I-Corps Southeast Regional</b>, Georgia Tech</span></div>
+  </div>
+
+  <div class="pblock subj-foot" style="max-width:none">
+    <a class="textlink" href="#top">← Back to home</a>
+    <a class="next" href="#bactesign"><span class="label">Our first product</span><b>BacteSign →</b></a>
+  </div>
+</div></div>
+
+<div id="bacteView" hidden><div class="wrap subject">
+  <div class="crumb"><a href="#top">← Home</a><span>/</span><a href="#company">Company</a><span>/</span><span>Product</span></div>
+  <h1>BacteSign</h1>
+  <p class="lede">An engineered assay for bacterial identification, antibiotic susceptibility testing and antimicrobial resistance research, designed to plug into automated and AI-driven labs.</p>
+  <div class="legend-row"><span class="status st-done">Bacterial proof of concept</span><span class="status st-dev">Research-use system in development</span></div>
+  <div class="cards three">
+    <div class="card"><span class="label">01</span><h3>Identify</h3><p>Separate and position bacteria on an engineered surface so they can be told apart.</p></div>
+    <div class="card"><span class="label">02</span><h3>Test susceptibility</h3><p>Expose positioned bacteria to an antibiotic and watch whether they keep growing.</p></div>
+    <div class="card"><span class="label">03</span><h3>Study resistance</h3><p>Compare how strains respond across antibiotics and concentrations for AMR research.</p></div>
+  </div>
+
+  <div class="pblock">
+    <span class="label">How a run works</span>
+    <h2>Five steps, one readout.</h2>
+    <ol class="pipeline">
+      <li><span class="k">01</span><div><h3>Load the sample</h3><p>The sample goes onto the assay disc.</p></div></li>
+      <li><span class="k">02</span><div><h3>Separate and position</h3><p>Engineered surfaces hold bacteria in defined spots.</p></div></li>
+      <li><span class="k">03</span><div><h3>Expose</h3><p>Each spot meets an antibiotic at a set concentration, next to an untreated control.</p></div></li>
+      <li><span class="k">04</span><div><h3>Measure impedance</h3><p>As bacteria grow and metabolise, the electrical impedance of their surroundings drops. Electrodes track that change over time.</p></div></li>
+      <li><span class="k">05</span><div><h3>Analyse</h3><p>Comparing treated and control signals shows whether the antibiotic stopped growth.</p></div></li>
+    </ol>
+  </div>
+
+  <div class="pblock" id="bacte-sim">
+    <span class="label">Interactive</span>
+    <h2>Try the readout.</h2>
+    <p class="lede">Choose a strain profile and an antibiotic concentration. The chart compares the treated sample's signal with an untreated control over six hours.</p>
+    <div class="lab" style="margin-top:28px">
+      <div>
+        <div class="sim-controls">
+          <div><span class="label">Strain profile</span><div class="seg" id="simProfiles" role="group" aria-label="Strain profile"><button data-p="susceptible" aria-pressed="true">Susceptible</button><button data-p="intermediate" aria-pressed="false">Intermediate</button><button data-p="resistant" aria-pressed="false">Resistant</button></div></div>
+          <div class="slider"><label for="abConc"><span>Antibiotic concentration</span><output id="abOut">4 µg/mL</output></label><input type="range" id="abConc" min="0" max="9" step="1" value="4"></div>
+        </div>
+        <svg id="simChart" viewBox="0 0 560 300" role="img" aria-label="Impedance drop over six hours for the untreated control and the treated sample"><g id="simAxes"></g><path id="simCtrl" class="ctrl"/><path id="simTreat" class="treat"/><circle id="simDot" r="5" class="dotc"/></svg>
+        <div class="legend"><span><i></i>Control, no antibiotic</span><span><i class="lg-t"></i>With antibiotic</span></div>
+      </div>
+      <div class="readout">
+        <div><span class="label">Result at 6 h</span><div style="margin-top:10px"><span id="simResult" class="status">–</span></div></div>
+        <div><span class="label">Growth signal vs control</span><div class="big" id="simPct">6%</div></div>
+        <p id="simExpl" style="color:var(--muted)"></p>
+      </div>
+    </div>
+    <div class="proto">
+      <div class="proto-head"><span class="label">Protocol request</span><span class="status st-plan">Planned interface</span></div>
+      <pre id="simProto"></pre>
+      <p class="note">This is the idea behind Physical AI integration: an AI-driven lab sends a request like this to set up the run, then gets the impedance data and analysis back.</p>
+    </div>
+    <p class="note">Illustrative simulation with made-up curves. It shows how the readout works. It is not measured BacteSign data and is not for clinical use.</p>
+  </div>
+
+  <div class="pblock subj-foot" style="max-width:none">
+    <a class="textlink" href="#company">← The company</a>
+    <a class="next" href="#top"><span class="label">Back to</span><b>Home →</b></a>
+  </div>
+</div></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><h4>Explore</h4><ul>
+        <li><a href="#company">Company</a></li><li><a href="#bactesign">BacteSign</a></li><li><a href="#fields">Fields</a></li><li><a href="#feature">Thermoelectrics</a></li><li><a href="#notebook">The notebook</a></li><li><a href="#experiment">Experiment</a></li>
+      </ul></div>
+      <div><h4>Subjects</h4><ul id="footSubjects"></ul></div>
+      <div><h4>Projects</h4><ul>
+        <li><a href="#bactesign">BacteSign</a><span class="desc">Engineered assay for bacterial identification and antibiotic susceptibility testing.</span></li>
+        <li><a class="ext" href="https://futurestarlabs.com/projects" target="_blank" rel="noopener">Urban Farming</a><span class="desc">Soil and environmental sensors for farming in tight city spaces.</span></li>
+      </ul></div>
+      <div><h4>Elsewhere</h4><ul>
+        <li><a class="ext" href="https://www.instagram.com/futurestar33/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a class="ext" href="https://www.x.com/FutureStar33" target="_blank" rel="noopener">X</a></li>
+        <li><a class="ext" href="https://www.linkedin.com/in/andre-childs-69659478/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a class="ext" href="https://futurestarlabs.com/events" target="_blank" rel="noopener">Livestreams</a></li>
+      </ul></div>
+    </div>
+    <div class="foot-base">
+      <span>© Future Star Labs · Matter → Energy → Signal → Discovery</span>
+      <button id="toTop">Back to top ↑</button>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function(){
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- data ---------- */
+const SUBJECTS = [
+ {slug:'thermoelectrics',name:'Thermoelectrics',field:'Thermal Energy',orig:'thermoelectrics',
+  summary:'Thermal engineering looks at how heat moves and how it turns into other kinds of energy. Thermoelectric devices do that conversion with no moving parts.',
+  secs:[
+   {id:'two-methods',t:'Two methods',body:[['p','A thermoelectric device runs in one of two directions. Keep its two faces at different temperatures and it generates power. Send a current through it and it moves heat, which means it cools.'],['ul',['Thermoelectric power generation','Thermoelectric cooling']]]},
+   {id:'peltier',t:'The Peltier effect',body:[['p','When current flows through a circuit of semiconductor and metal contacts, it carries heat along with it, moving heat from one electrode to the other.'],['p','Semiconductors produce enough thermoelectric power for practical electronic cooling, which matters most where size is tight and moving parts are a problem. A cooling unit pairs one p-type and one n-type element joined by ohmic contacts.']]},
+   {id:'thermocouples',t:'Thermocouples',body:[['p','Join two different conductors and hold the two junctions at different temperatures. A voltage appears that is proportional to the temperature difference. This is the Seebeck effect, and every thermocouple works on it.'],['eq','V = α (Th − Tc)','α is the Seebeck coefficient of the pair of materials']]},
+   {id:'piezoelectric',t:'The piezoelectric effect',body:[['p','Some materials produce an electric charge when they are squeezed or bent. It is a close relative: another direct path from one form of energy to electricity.']]}
+  ]},
+ {slug:'physics',name:'Physics',field:'Electromagnetism',orig:'physics',
+  summary:'Recitation notes from University Physics with Calculus, covering magnetic induction, capacitance and electric potential, worked as conceptual questions.',
+  secs:[
+   {id:'induction',t:'Electromagnetic induction',body:[['p','A changing magnetic flux through a circuit induces an emf. Lenz’s law sets its direction: the induced current pushes back against the change that caused it.'],['p','The size of the emf depends on how quickly the flux changes, not on how strong the field is.'],['eq','ε = −N dΦ/dt','Faraday’s law for a coil of N turns'],['eq','Φ = B A cos θ','flux through a flat loop']]},
+   {id:'capacitance',t:'Capacitors and capacitance',body:[['p','Capacitance comes from geometry and the dielectric: plate area, plate separation and the material between them. It does not depend on the stored charge, so an empty capacitor has the same capacitance as a full one.'],['p','The notes cover dielectrics, spherical capacitors, networks of three 1.0 μF capacitors, and conducting slabs.'],['eq','C = Q / V','definition'],['eq','C = κ ε₀ A / d','parallel plates with a dielectric']]},
+   {id:'potential',t:'Electric potential',body:[['p','Potential difference and potential energy, uniformly charged spheres, equipotential points, and why the surface of a conductor is always at one potential. Applications include grounding, photocopiers and electrostatic precipitators.'],['eq','U = q V','potential energy of a charge q']]}
+  ]},
+ {slug:'thermodynamics',name:'Thermodynamics',field:'Thermal Energy',orig:'thermodynamics',
+  summary:'Phase diagrams and the conditions for equilibrium, following Gaskell’s Introduction to the Thermodynamics of Materials.',
+  secs:[
+   {id:'phase-equilibrium',t:'Phase equilibrium',body:[['p','A phase is at equilibrium when its free energy is at a minimum for its composition, pressure and temperature. That minimum is what makes the structure stable. Changing any one of the three pushes the free energy back up.'],['eq','dG = 0','at the minimum, with P, T and composition fixed']]},
+   {id:'ideal-gas',t:'The state of an ideal gas',body:[['p','At constant temperature, pressure falls as volume rises. At constant pressure, volume rises with temperature. Put the two together and you get the ideal gas law.'],['eq','PV = nRT','equation of state']]}
+  ]},
+ {slug:'material-structures',name:'Material Structures',field:'Materials',orig:'material-structures',
+  summary:'Crystallography, defects, diffusion, phase changes, fracture, conduction, magnetism and thermal behaviour: the structure that sets a material’s properties.',
+  secs:[
+   {id:'dislocations',t:'Dislocations and strengthening',body:[['p','Resolved shear stress is the part of an applied tensile stress that acts along a slip plane. A crystal starts to yield when it reaches the critical resolved shear stress, which is a property of the material.']]},
+   {id:'miller-indices',t:'Miller indices',body:[['p','Crystal planes are labelled with three integers (hkl). Take the reciprocals of where the plane crosses each axis, then clear the fractions. A zero means the plane runs parallel to that axis.']]},
+   {id:'xrd',t:'X-ray diffraction',body:[['p','Diffraction peaks give the crystal structure, the spacing between planes, the lattice constant and the atomic radius. A worked example indexes four peaks, (110), (200), (211) and (220), as a BCC lattice with a lattice constant near 0.289 nm.'],['eq','nλ = 2d sin θ','Bragg’s law'],['eq','1/d² = (h² + k² + l²) / a²','spacing between planes in a cubic crystal'],['eq','a = 4r / √3','body-centred cubic']]}
+  ]},
+ {slug:'thin-films',name:'Thin Films',field:'Materials',orig:'thin-films',
+  summary:'Growing films from a few atoms to a few microns thick, where substrate temperature, gas, pressure, geometry and power all shape the result.',
+  secs:[
+   {id:'plasma',t:'Plasma sources',body:[['p','RF plasma deposition runs at the standard 13.56 MHz. Electron cyclotron resonance sources work at about 10⁻⁵ to 10⁻³ Torr with ionisation ratios near 10⁻³ to 10⁻¹, compared with roughly 10⁻⁶ to 10⁻⁴ for RF plasma.']]},
+   {id:'cvd',t:'Chemical vapour deposition',body:[['p','Reactor temperature is measured with thermocouples or optical pyrometers. Gas flow is measured with rotameters or, more and more, electronic flow meters that make automation possible. Pressure is held either by changing the inflow at a fixed pumping rate or by throttling the pump.'],['p','Hot-wall tube reactors use fully developed laminar flow to deposit polysilicon, silicon dioxide and silicon nitride. Low-temperature reactors at 350–450 °C lay down passivation layers such as silicon nitride over aluminium.'],['ul',['Reaction chamber','Power source and matching network','Gas flow control','Pressure measurement']]]}
+  ]},
+ {slug:'vacuum-system',name:'Vacuum Systems',field:'Experimentation',orig:'vacuum-system',
+  summary:'How a chamber is pumped down: first the gas in the volume, then the gas stuck to its surfaces, then the limits of the pumps themselves.',
+  secs:[
+   {id:'pump-down',t:'Pump-down time',body:[['p','The time to go from P₁ to P₂ comes from the chamber volume and the average pumping speed. It holds while the speed stays close to its average and the target pressure is at least ten times the base pressure.'],['p','Pumping speeds are usually quoted for nitrogen. Other gases need a correction for molecular weight.'],['eq','t = 2.3 (V / S) log(P₁ / P₂)','V in litres, S in litres per second']]},
+   {id:'pumps',t:'Pumps',body:[['ul',['Oil diffusion: hot oil vapour knocks gas molecules toward the exhaust','Molecular drag: a spinning rotor sweeps molecules through grooves and compresses them toward the exhaust','Gas ballast: handles vapours that condense, such as water']]]}
+  ]},
+ {slug:'colloids-and-interfaces',name:'Colloids & Interfaces',field:'Materials',orig:'colloids-%26-interfaces',
+  summary:'Surface and interfacial tension, self-assembled monolayers, forces between colloidal particles, emulsions and self-assembling polymers.',
+  secs:[
+   {id:'polyelectrolytes',t:'Polyelectrolytes',body:[['p','Negatively and positively charged polyelectrolytes can be stacked layer by layer on a surface. The notes compare strong and weak polyelectrolytes, how their coatings change colloid stability, and how pH and ionic strength make multilayer capsules swell.']]},
+   {id:'self-assembly',t:'Self-assembled molecules',body:[['p','The forces behind molecular self-assembly, and what makes thiol and silane monolayers form on a surface.']]}
+  ]},
+ {slug:'electrophysiology',name:'Electrophysiology',field:'Experimentation',orig:'electrophysiology',
+  summary:'Electrical signals in living systems: biosensors, membrane transport, bioenergetics and how populations of cells behave.',
+  secs:[
+   {id:'glossary',t:'Working glossary',body:[['ul',['Quorum sensing: bacteria sensing and reacting to their population density through gene regulation','Biosensor: a biomolecule as the sensing surface, paired with a transducer that turns binding into a measurable signal','Spatio-temporal cluster: separate sites that fire together within one time window']]]}
+  ]}
+];
+const EXTERNAL = [['Meta Optics','meta-optics-1'],['Chemistry','chemistry'],['Robotics','robotics'],['Data Analysis','data-analysis'],['BlockChain','blockchain'],['Keeping a Healthy Body','keeping-a-healthy-body']];
+const FIELDS = [
+ ['∇T → J','Thermal Energy','How heat moves, settles into equilibrium and converts into other forms of energy.',[['Thermoelectrics','thermoelectrics'],['Thermodynamics','thermodynamics']]],
+ ['ε = −N dΦ/dt','Electromagnetism','Magnetic fields, changing flux and the currents they induce.',[['Induction','physics-induction']]],
+ ['U = qV','Electricity','Charge, potential and capacitance: how a field stores energy and gives it back.',[['Capacitance','physics-capacitance'],['Electric potential','physics-potential']]],
+ ['nλ = 2d sin θ','Materials','Crystal structure, thin films and interfaces, the architecture that decides what matter can do.',[['Material structures','material-structures'],['Thin films','thin-films'],['Colloids & interfaces','colloids-and-interfaces']]],
+ ['P₁ → P₂','Experimentation','The apparatus and the measurement: vacuum systems, deposition chambers and signals from living cells.',[['Vacuum systems','vacuum-system'],['Electrophysiology','electrophysiology']]]
+];
+const CHAPTERS = [
+ ['Thermoelectrics','heat ⇄ current','thermoelectrics'],['Peltier Effect','I → Q̇','thermoelectrics-peltier'],['Thermocouples','V = α ΔT','thermoelectrics-thermocouples'],
+ ['Induction','ε = −N dΦ/dt','physics-induction'],['Capacitance','C = Q / V','physics-capacitance'],['Electric Potential','U = qV','physics-potential'],
+ ['Phase Equilibrium','dG = 0','thermodynamics-phase-equilibrium'],['X-Ray Diffraction','nλ = 2d sin θ','material-structures-xrd'],['Thin-Film Deposition','13.56 MHz','thin-films'],
+ ['Vacuum Pump-Down','t = 2.3 (V/S) log(P₁/P₂)','vacuum-system-pump-down'],['Polyelectrolytes','layer by layer','colloids-and-interfaces-polyelectrolytes'],['Biosensors','binding → signal','electrophysiology-glossary']
+];
+const esc = s => s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const subjOf = h => SUBJECTS.find(s => h===s.slug || h.startsWith(s.slug+'-'));
+const pad = n => String(n).padStart(2,'0');
+
+/* ---------- build lists ---------- */
+document.getElementById('subjPanel').innerHTML =
+  SUBJECTS.map((s,i)=>`<a href="#${s.slug}"><span class="num">${pad(i+1)}</span><span>${esc(s.name)}</span></a>`).join('') +
+  `<div class="dd-sep label">On futurestarlabs.com</div>` +
+  EXTERNAL.map(([n,p])=>`<a class="ext" href="https://futurestarlabs.com/${p}" target="_blank" rel="noopener"><span>${esc(n)}</span></a>`).join('');
+document.getElementById('footSubjects').innerHTML = SUBJECTS.map(s=>`<li><a href="#${s.slug}">${esc(s.name)}</a></li>`).join('');
+document.getElementById('fieldList').innerHTML = FIELDS.map(([eq,t,d,links],i)=>`<li><div class="topline"><span class="eq">${esc(eq)}</span><span class="label">${pad(i+1)}</span></div><h3>${esc(t)}</h3><p>${esc(d)}</p><div class="chips">${links.map(([n,h])=>`<a href="#${h}">${esc(n)} →</a>`).join('')}</div></li>`).join('');
+document.getElementById('index').innerHTML = CHAPTERS.map(([t,e,h],i)=>{const s=subjOf(h);return `<li><a href="#${h}"><span class="n">${String(i+1).padStart(3,'0')}</span><span class="t">${esc(t)}</span><span class="e">${esc(e)}</span><span class="s">${esc(s.name)} →</span></a></li>`}).join('');
+document.getElementById('alsoLinks').innerHTML = EXTERNAL.map(([n,p])=>`<a class="ext" href="https://futurestarlabs.com/${p}" target="_blank" rel="noopener">${esc(n)}</a>`).join('');
+
+/* ---------- nav ---------- */
+const nav=document.getElementById('nav'), menuBtn=document.getElementById('menuBtn');
+const subjBtn=document.getElementById('subjBtn'), subjPanel=document.getElementById('subjPanel');
+function setDD(open){subjPanel.hidden=!open;subjBtn.setAttribute('aria-expanded',open)}
+subjBtn.addEventListener('click',e=>{e.stopPropagation();setDD(subjPanel.hidden)});
+menuBtn.addEventListener('click',()=>{const o=!nav.classList.contains('open');nav.classList.toggle('open',o);menuBtn.setAttribute('aria-expanded',o);menuBtn.textContent=o?'Close':'Menu'});
+document.addEventListener('click',e=>{if(!e.target.closest('.dd'))setDD(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){setDD(false)}});
+nav.addEventListener('click',e=>{if(e.target.closest('a')){setDD(false);nav.classList.remove('open');menuBtn.setAttribute('aria-expanded',false);menuBtn.textContent='Menu'}});
+document.getElementById('toTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:reduce?'auto':'smooth'}));
+
+/* ---------- router ---------- */
+const home=document.getElementById('home'), sv=document.getElementById('subjectView');
+function renderSubject(s){
+  const i=SUBJECTS.indexOf(s), next=SUBJECTS[(i+1)%SUBJECTS.length];
+  const block=b=>b[0]==='p'?`<p>${esc(b[1])}</p>`:b[0]==='ul'?`<ul>${b[1].map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:`<div class="eqblock"><code>${esc(b[1])}</code><span>${esc(b[2])}</span></div>`;
+  sv.innerHTML=`<div class="wrap subject">
+    <div class="crumb"><a href="#notebook">← Notebook</a><span>/</span><span>Subject ${pad(i+1)} · ${esc(s.field)}</span></div>
+    <h1>${esc(s.name)}</h1><p class="lede">${esc(s.summary)}</p>
+    <div class="subj-grid">
+      <nav class="toc" aria-label="Sections"><span class="label">Contents</span><ol>${s.secs.map((x,j)=>`<li><a href="#${s.slug}-${x.id}"><span class="k">§${j+1}</span>${esc(x.t)}</a></li>`).join('')}</ol></nav>
+      <div>${s.secs.map((x,j)=>`<article class="subj-sec" id="${s.slug}-${x.id}"><span class="k">§${j+1}</span><h2>${esc(x.t)}</h2>${x.body.map(block).join('')}</article>`).join('')}
+        <div class="subj-foot"><a class="textlink ext" href="https://futurestarlabs.com/${s.orig}" target="_blank" rel="noopener">Original notes on futurestarlabs.com</a>
+        <a class="next" href="#${next.slug}"><span class="label">Next subject</span><b>${esc(next.name)} →</b></a></div>
+      </div>
+    </div></div>`;
+  document.title = s.name+' · Future Star Labs Demo';
+}
+const VIEWS={company:[document.getElementById('companyView'),'Company'],bactesign:[document.getElementById('bacteView'),'BacteSign']};
+function route(){
+  const h=decodeURIComponent(location.hash.slice(1)); const s=h&&subjOf(h); const v=VIEWS[h];
+  Object.values(VIEWS).forEach(x=>x[0].hidden=true);
+  if(v){
+    home.hidden=true; sv.hidden=true; v[0].hidden=false; document.title=v[1]+' · Future Star Labs Demo';
+    requestAnimationFrame(()=>window.scrollTo(0,0));
+  }else if(s){
+    home.hidden=true; sv.hidden=false; renderSubject(s);
+    requestAnimationFrame(()=>{const el=h!==s.slug&&document.getElementById(h); if(el) el.scrollIntoView(); else window.scrollTo(0,0)});
+  }else{
+    const wasHidden=home.hidden; home.hidden=false; sv.hidden=true; document.title='Future Star Labs Demo';
+    if(wasHidden || h) requestAnimationFrame(()=>{const el=h&&document.getElementById(h); if(el) el.scrollIntoView(); else window.scrollTo(0,0)});
+  }
+}
+addEventListener('hashchange',route);
+route();
+
+/* ---------- loader ---------- */
+(function(){
+  let seen=false; try{seen=sessionStorage.getItem('fsl-loaded')==='1'}catch(e){}
+  const lh=location.hash.slice(1);
+  if(seen||reduce||subjOf(lh||'~')||lh==='company'||lh==='bactesign') return;
+  const L=document.getElementById('loader'), c=document.getElementById('loadCount');
+  L.hidden=false; const t0=performance.now(), dur=1100; let done=false;
+  const finish=()=>{if(done)return;done=true;L.classList.add('done');setTimeout(()=>L.hidden=true,400);try{sessionStorage.setItem('fsl-loaded','1')}catch(e){}};
+  L.addEventListener('click',finish);
+  (function tick(now){if(done)return;const p=Math.min(1,(now-t0)/dur);c.textContent=String(Math.round(p*100)).padStart(3,'0')+' %';if(p<1)requestAnimationFrame(tick);else setTimeout(finish,150)})(t0);
+})();
+
+/* ---------- hero: probe + chain ---------- */
+if(!reduce){
+  const pr=document.getElementById('probe'); let v=23.4;
+  setInterval(()=>{v+= (Math.random()-.5)*.12; v=Math.max(22.9,Math.min(23.9,v)); pr.textContent=v.toFixed(1)},900);
+  const items=[...document.querySelectorAll('#chain li')]; let k=0;
+  setInterval(()=>{k=(k+1)%items.length; items.forEach((li,i)=>li.classList.toggle('on',i<=k))},1400);
+}
+
+/* ---------- interference canvas ---------- */
+(function(){
+  const cv=document.getElementById('wave'), ctx=cv.getContext('2d'), read=document.getElementById('waveRead');
+  const off=document.createElement('canvas'), octx=off.getContext('2d');
+  const GW=176, GH=121; off.width=GW; off.height=GH; const img=octx.createImageData(GW,GH);
+  const s1={x:.36,y:.5}, s2={x:.64,y:.5}; const LAMBDA=0.095; // fraction of width
+  let t=0, visible=true, dragging=false;
+  function size(){const r=cv.getBoundingClientRect(), d=Math.min(2,devicePixelRatio||1); cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d)}
+  function frame(){
+    const k=2*Math.PI/LAMBDA, d=img.data; let p=0;
+    for(let j=0;j<GH;j++){const y=j/GW;for(let i=0;i<GW;i++){const x=i/GW;
+      const d1=Math.hypot(x-s1.x,y-s1.y*GH/GW), d2=Math.hypot(x-s2.x,y-s2.y*GH/GW);
+      const a=(Math.sin(k*d1-t)/(1+d1*3)+Math.sin(k*d2-t)/(1+d2*3));
+      const v=Math.max(0,a)/1.6, w=v*v;
+      d[p++]=10+w*245; d[p++]=11+w*144; d[p++]=13+w*56; d[p++]=255;}}
+    octx.putImageData(img,0,0);
+    ctx.imageSmoothingEnabled=true; ctx.drawImage(off,0,0,cv.width,cv.height);
+    const W=cv.width,H=cv.height, R=Math.max(6,W*.012);
+    [[s1,'#ebe7df',false],[s2,'#ff9b45',true]].forEach(([s,c,ring])=>{
+      ctx.beginPath();ctx.arc(s.x*W,s.y*H,R,0,7);ctx.fillStyle=c;ctx.fill();
+      if(ring){ctx.beginPath();ctx.arc(s.x*W,s.y*H,R*2.1,0,7);ctx.strokeStyle='rgba(255,155,69,.7)';ctx.lineWidth=Math.max(1.5,W*.002);ctx.stroke()}
+    });
+    const sep=Math.hypot(s2.x-s1.x,(s2.y-s1.y)*GH/GW)/LAMBDA; read.textContent='d = '+sep.toFixed(1)+' λ';
+  }
+  function loop(){ if(visible){t+=.09; frame()} requestAnimationFrame(loop) }
+  function setFromEvent(e){const r=cv.getBoundingClientRect(); s2.x=Math.min(.97,Math.max(.03,(e.clientX-r.left)/r.width)); s2.y=Math.min(.95,Math.max(.05,(e.clientY-r.top)/r.height)); if(reduce)frame()}
+  cv.addEventListener('pointerdown',e=>{dragging=true;cv.setPointerCapture(e.pointerId);setFromEvent(e)});
+  cv.addEventListener('pointermove',e=>{if(dragging)setFromEvent(e)});
+  cv.addEventListener('pointerup',()=>dragging=false);
+  cv.addEventListener('keydown',e=>{const st=.02;const m={ArrowLeft:[-st,0],ArrowRight:[st,0],ArrowUp:[0,-st],ArrowDown:[0,st]}[e.key];if(!m)return;e.preventDefault();s2.x=Math.min(.97,Math.max(.03,s2.x+m[0]));s2.y=Math.min(.95,Math.max(.05,s2.y+m[1]));if(reduce)frame()});
+  new IntersectionObserver(es=>visible=es[0].isIntersecting).observe(cv);
+  addEventListener('resize',()=>{size();frame()});
+  size(); frame(); if(!reduce) loop();
+})();
+
+/* ---------- thermoelectric steps ---------- */
+(function(){
+  const svg=document.getElementById('couple'), cap=document.getElementById('stepCap');
+  const btns=[...document.querySelectorAll('#steps button')];
+  function set(n){svg.dataset.step=n;btns.forEach(b=>b.classList.toggle('on',b.dataset.step==n));cap.textContent='Step '+pad(n)+' of 04'}
+  btns.forEach(b=>b.addEventListener('click',()=>set(b.dataset.step)));
+  if(matchMedia('(min-width:960px)').matches){
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)set(e.target.dataset.step)}),{rootMargin:'-45% 0px -45% 0px'});
+    btns.forEach(b=>io.observe(b));
+  }
+})();
+
+/* ---------- Seebeck simulator ---------- */
+(function(){
+  const cold=document.getElementById('cold'), hot=document.getElementById('hot');
+  const ALPHA=0.041; // mV per °C
+  const lerp=(a,b,t)=>Math.round(a+(b-a)*t);
+  function tempColor(T){ // 0 °C cool blue → 250 dull red-orange → 500 bright amber
+    const t=Math.max(0,Math.min(1,T/500));
+    const stops=[[0,[114,180,212]],[.25,[150,150,150]],[.6,[214,96,40]],[1,[255,196,120]]];
+    for(let i=1;i<stops.length;i++){if(t<=stops[i][0]){const [p0,c0]=stops[i-1],[p1,c1]=stops[i],u=(t-p0)/(p1-p0);return `rgb(${lerp(c0[0],c1[0],u)},${lerp(c0[1],c1[1],u)},${lerp(c0[2],c1[2],u)})`}}
+  }
+  function update(){
+    const c=+cold.value, h=+hot.value, dT=h-c, V=ALPHA*dT;
+    document.getElementById('coldOut').textContent=c+' °C';
+    document.getElementById('hotOut').textContent=h+' °C';
+    const sign=dT>0?'+':dT<0?'−':'';
+    document.getElementById('dtOut').innerHTML=sign+Math.abs(dT)+'<small>°C</small>';
+    document.getElementById('vOut').innerHTML=(V<0?'−':'')+Math.abs(V).toFixed(2)+'<small>mV</small>';
+    document.getElementById('dtLabel').textContent='ΔT '+sign+Math.abs(dT)+' °C';
+    document.getElementById('meter').style.width=Math.min(100,Math.abs(V)/(ALPHA*500)*100)+'%';
+    const cc=tempColor(c), hc=tempColor(h);
+    document.getElementById('jc').setAttribute('fill',cc); document.getElementById('jh').setAttribute('fill',hc);
+    document.getElementById('jhGlow').setAttribute('fill',hc); document.getElementById('jhGlow').setAttribute('opacity',(.05+.25*h/500).toFixed(2));
+    document.getElementById('g0').setAttribute('stop-color',cc); document.getElementById('g1').setAttribute('stop-color',hc);
+  }
+  cold.addEventListener('input',update); hot.addEventListener('input',update); update();
+})();
+
+/* ---------- BacteSign readout simulation (illustrative) ---------- */
+(function(){
+  const MIC={susceptible:1,intermediate:8,resistant:64};
+  let prof='susceptible';
+  const conc=document.getElementById('abConc'), out=document.getElementById('abOut');
+  const X0=52,X1=544,Y0=250,Y1=16,TMAX=6,YMAX=20;
+  const sx=t=>X0+(X1-X0)*t/TMAX, sy=v=>Y0-(Y0-Y1)*v/YMAX;
+  const f=x=>18/(1+Math.exp(-(x-3)/.55)), base=t=>f(t)-f(0);
+  let g='';
+  for(let v=0;v<=20;v+=5) g+=`<line x1="${X0}" x2="${X1}" y1="${sy(v)}" y2="${sy(v)}" class="grid"/><text x="${X0-10}" y="${sy(v)+4}" text-anchor="end">${v}</text>`;
+  for(let t=0;t<=6;t++) g+=`<text x="${sx(t)}" y="${Y0+20}" text-anchor="middle">${t}</text>`;
+  g+=`<text x="${(X0+X1)/2}" y="${Y0+42}" text-anchor="middle">Time (h)</text><text transform="translate(14 ${(Y0+Y1)/2}) rotate(-90)" text-anchor="middle">Impedance drop (%)</text>`;
+  document.getElementById('simAxes').innerHTML=g;
+  const path=fn=>{let d='';for(let i=0;i<=60;i++){const t=i/10;d+=(i?'L':'M')+sx(t).toFixed(1)+' '+sy(fn(t)).toFixed(1)}return d};
+  document.getElementById('simCtrl').setAttribute('d',path(base));
+  function update(){
+    const c=0.25*Math.pow(2,+conc.value), gr=1/(1+Math.pow(c/MIC[prof],2));
+    out.textContent=(c<1?c.toFixed(2):c)+' µg/mL';
+    document.getElementById('simTreat').setAttribute('d',path(t=>base(t)*gr));
+    const dot=document.getElementById('simDot'); dot.setAttribute('cx',sx(6)); dot.setAttribute('cy',sy(base(6)*gr));
+    const [label,cls,expl]= gr<.3
+      ?['Growth inhibited','r-inh','The treated signal stays nearly flat, so the antibiotic stopped growth at this concentration.']
+      : gr<.7?['Partly inhibited','r-part','Growth slowed but did not stop. A higher concentration may be needed.']
+      :['Not inhibited','r-none','The treated signal follows the control, so the strain kept growing despite the antibiotic.'];
+    const r=document.getElementById('simResult'); r.textContent=label; r.className='status '+cls;
+    document.getElementById('simPct').textContent=Math.round(gr*100)+'%';
+    document.getElementById('simExpl').textContent=expl;
+    document.getElementById('simProto').textContent=JSON.stringify({assay:'bactesign.susceptibility',sample:'strain_profile:'+prof,antibiotic_ug_per_ml:c,control_well:true,readout:'impedance',duration_h:6,interval_min:10,analysis:'ai_assisted'},null,2);
+  }
+  const btns=[...document.querySelectorAll('#simProfiles button')];
+  btns.forEach(b=>b.addEventListener('click',()=>{prof=b.dataset.p;btns.forEach(x=>x.setAttribute('aria-pressed',x===b));update()}));
+  conc.addEventListener('input',update); update();
+})();
+})();
+</script>
+
+</html>

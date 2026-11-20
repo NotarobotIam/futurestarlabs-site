@@ -7,7 +7,7 @@ export const HERO = {
   label: "Biological testing · Physics · Materials",
   chain: ["Matter", "Signal", "Discovery"],
   title: "Future Star",
-  titleAccent: "Labs",
+  titleAccent: "Laboratories",
   body: "Future Star Laboratories builds programmable biological testing platforms for Physical AI labs. The work rests on first-principles physics and materials, from a single thermocouple junction to an engineered surface that positions a cell.",
   verbs: "Experiment / Understand / Build",
   probeLabel: "Probe · bench",

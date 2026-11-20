@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { HERO } from "@/content/home";
 import Chain from "../Chain";
 import { prefersReducedMotion } from "../motion";
+import ShipLogo from "./ShipLogo";
 
 export default function Hero() {
   const [probe, setProbe] = useState(23.4);
@@ -26,10 +27,13 @@ export default function Hero() {
       <div className="wrap">
         <div className="label">{HERO.label}</div>
         <Chain items={HERO.chain.map((label) => ({ label }))} />
-        <h1>
-          {HERO.title}
-          <span>{HERO.titleAccent}</span>
-        </h1>
+        <div className="hero-title">
+          <ShipLogo className="hero-logo" />
+          <h1>
+            {HERO.title}
+            <span>{HERO.titleAccent}</span>
+          </h1>
+        </div>
         <div className="hero-foot">
           <div>
             <p>{HERO.body}</p>

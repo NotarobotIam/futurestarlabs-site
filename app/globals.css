@@ -99,8 +99,27 @@ section{padding-block:clamp(72px,10vw,128px);border-top:1px solid var(--line)}
 .chain{display:flex;flex-wrap:wrap;gap:8px 14px;list-style:none;padding:0;margin:22px 0 0;font:500 13px var(--mono);color:var(--muted)}
 .chain li:not(:first-child)::before{content:"→";margin-right:14px;color:var(--line)}
 .chain li.on{color:var(--fg)}
-.hero h1{font-size:clamp(56px,11.5vw,156px);letter-spacing:-.03em;line-height:.92;margin-top:36px}
+.hero h1{font-size:clamp(40px,11.5vw,156px);letter-spacing:-.03em;line-height:.92;margin-top:36px}
 .hero h1 span{display:block;font-style:italic;color:var(--accent)}
+.hero-title{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:clamp(12px,3vw,48px);margin-top:36px}
+.hero-title h1{margin-top:0}
+.hero-logo{display:block;height:clamp(200px,30vw,400px);width:auto;overflow:visible}
+/* Jet animation: takes off from the cells at the bottom and climbs, laying down
+   the DNA helix as its exhaust (the helix's clip window rides on the nozzles),
+   then keeps hovering with a live exhaust. Rise distance is in SVG units. */
+.hero-logo{--jet-rise:3s;--jet-ease:cubic-bezier(.45,0,.2,1)}
+.hero-logo .jet-rise,.hero-logo .trail-reveal{animation:jet-takeoff var(--jet-rise) var(--jet-ease) .3s both}
+.hero-logo .ship-body{animation:jet-climb 3.2s ease-in-out calc(var(--jet-rise) + .3s) infinite}
+@keyframes jet-takeoff{from{transform:translateY(240px)}to{transform:none}}
+.hero-logo .ship-trail{animation:jet-trail 3.2s ease-in-out infinite;transform-origin:80px 160px}
+.hero-logo .jet-flame{animation:jet-flame .14s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0}
+.hero-logo .jet-cells{animation:jet-cells 2.4s ease-in-out infinite}
+.fsl-loading .hero-logo,.fsl-loading .hero-logo *{animation-play-state:paused}
+@keyframes jet-climb{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes jet-trail{0%,100%{transform:translateY(0) skewX(0)}25%{transform:translateY(-4px) skewX(1.6deg)}50%{transform:translateY(-9px) skewX(0)}75%{transform:translateY(-4px) skewX(-1.6deg)}}
+@keyframes jet-flame{from{transform:scaleY(.75);opacity:.75}to{transform:scaleY(1.35);opacity:1}}
+@keyframes jet-cells{0%,100%{opacity:.55}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.hero-logo,.hero-logo *{animation:none!important}}
 .hero-foot{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;margin-top:44px;align-items:end}
 @media (min-width:820px){.hero-foot{grid-template-columns:minmax(0,1.4fr) auto}}
 .hero-foot p{max-width:56ch;font-size:19px;line-height:1.55}

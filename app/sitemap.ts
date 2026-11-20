@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/content/site";
 import { SUBJECTS } from "@/content/subjects";
 
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const paths = ["/", "/company", "/bactesign", ...SUBJECTS.map((s) => `/subjects/${s.slug}`)];
   return paths.map((p) => ({

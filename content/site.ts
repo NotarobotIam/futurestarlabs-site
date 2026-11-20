@@ -2,7 +2,7 @@
 
 export const SITE_NAME = "Future Star Labs";
 
-/** Canonical URL. Set NEXT_PUBLIC_SITE_URL in Vercel once the domain is connected. */
+/** Canonical URL. Set by NEXT_PUBLIC_SITE_URL in .github/workflows/deploy.yml for GitHub Pages. */
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
   (process.env.VERCEL_PROJECT_PRODUCTION_URL

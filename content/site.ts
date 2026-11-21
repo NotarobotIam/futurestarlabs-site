@@ -27,9 +27,7 @@ export const NAV_BEFORE: NavLink[] = [
 ];
 
 /** Header links after the Subjects dropdown. */
-export const NAV_AFTER: NavLink[] = [
-  { label: "Percent Difference", href: `${FSL}/percent-difference`, external: true },
-];
+export const NAV_AFTER: NavLink[] = [];
 
 export const FOOTER_EXPLORE: NavLink[] = [
   { label: "Company", href: "/company" },

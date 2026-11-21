@@ -66,7 +66,7 @@ export default function BacteSignPage() {
 
       <Closing
         label="Back to"
-        heading={{ text: "Future Star Labs" }}
+        heading={{ text: "Future Star Laboratories" }}
         ctas={[
           { label: "Home →", href: "/", primary: true },
           { label: "← The company", href: "/company" },

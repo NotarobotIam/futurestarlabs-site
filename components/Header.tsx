@@ -51,9 +51,9 @@ export default function Header() {
   return (
     <header className="site-head">
       <div className="wrap head-row">
-        <Link className="brand" href="/" aria-label="Future Star Labs home">
+        <Link className="brand" href="/" aria-label="Future Star Laboratories home">
           <BrandMark />
-          Future Star Labs
+          Future Star Laboratories
         </Link>
         <button
           className="menu-btn"

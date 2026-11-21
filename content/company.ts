@@ -28,7 +28,7 @@ export const COMPANY = {
       { title: "Cost and training", body: "Consumables are expensive, and every assay takes skilled staff time to learn and run well." },
       {
         title: "Machines are learning the bench",
-        body: "AI-driven robots are learning to pipette, handle samples and run experiments. They need assays built for machines: consistent, measurable and controlled by software. Future Star Labs builds its assays that way from the start.",
+        body: "AI-driven robots are learning to pipette, handle samples and run experiments. They need assays built for machines: consistent, measurable and controlled by software. Future Star Laboratories builds its assays that way from the start.",
       },
     ],
   },

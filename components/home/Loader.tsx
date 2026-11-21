@@ -55,7 +55,7 @@ export default function Loader() {
   return (
     <div id="loader" className={done ? "done" : undefined} aria-hidden="true">
       <div className="load-inner">
-        <div className="load-name">Future Star Labs</div>
+        <div className="load-name">Future Star Laboratories</div>
         <div className="label">{TAGLINE}</div>
         <div className="load-count">{String(pct).padStart(3, "0")} %</div>
       </div>

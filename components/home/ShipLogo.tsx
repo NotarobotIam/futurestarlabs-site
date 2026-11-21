@@ -1,4 +1,4 @@
-// Future Star Labs mark: a silver fighter jet climbing upward, with a DNA
+// Future Star Laboratories mark: a silver fighter jet climbing upward, with a DNA
 // double helix streaming out of its twin exhausts and ending in glowing cells.
 // Pure SVG, drawn after the company logo (teal / cyan palette).
 
@@ -74,7 +74,7 @@ export default function ShipLogo({ className }: { className?: string }) {
       className={className}
       viewBox="0 0 160 420"
       role="img"
-      aria-label="Future Star Labs logo: a fighter jet with a DNA double helix coming out of its two exhausts"
+      aria-label="Future Star Laboratories logo: a fighter jet with a DNA double helix coming out of its two exhausts"
     >
       <defs>
         <linearGradient id="fslBody" x1="0" x2="1" y1="0" y2="0">

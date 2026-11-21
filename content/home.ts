@@ -16,7 +16,7 @@ export const HERO = {
 export const PLATFORM = {
   no: "01 · Platform",
   heading: { text: "Programmable biological testing", em: "for Physical AI labs." } as Heading,
-  lede: "AI-driven machines are learning to plan experiments and carry them out at the bench. Future Star Labs builds the assays they need: tests that software can set up, run and read. BacteSign, for bacteria, comes first.",
+  lede: "AI-driven machines are learning to plan experiments and carry them out at the bench. Future Star Laboratories builds the assays they need: tests that software can set up, run and read. BacteSign, for bacteria, comes first.",
   root: {
     label: "Future Star Laboratories",
     title: "Programmable biological testing platforms",

@@ -1,6 +1,6 @@
 // Site-wide settings, navigation and footer links.
 
-export const SITE_NAME = "Future Star Labs";
+export const SITE_NAME = "Future Star Laboratories";
 
 /** Canonical URL. Set by NEXT_PUBLIC_SITE_URL in .github/workflows/deploy.yml for GitHub Pages. */
 export const SITE_URL =
